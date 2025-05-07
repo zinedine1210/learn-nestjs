@@ -1,9 +1,11 @@
-import { Controller, Get, Header, HttpCode, HttpRedirectResponse, Inject, Post, Query, Redirect, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, Header, HttpCode, HttpRedirectResponse, Inject, Post, Query, Redirect, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { MailService } from '../mail/mail.service';
 import { Connection } from '../connection/connection';
 import { UserRepository } from '../user-repository/user-repository';
 import { MemberService } from '../member/member.service';
+import { User } from 'generated/prisma';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Controller('/api/users')
 export class UserController {
@@ -102,5 +104,13 @@ export class UserController {
     console.log(this.memberService.getConnectionName());
     this.memberService.getSendEmail();
     return this.connection.getName();
+  }
+
+
+  @Post('/create')
+  postUser(
+    @Body() createUserDto: CreateUserDto
+  ): Promise<User> {
+    return this.userRepository.save(createUserDto.firstName, createUserDto.lastName);
   }
 }
