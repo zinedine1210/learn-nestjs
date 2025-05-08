@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Header, HttpCode, HttpRedirectResponse, Inject, Post, Query, Redirect, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, Header, HttpCode, HttpException, HttpRedirectResponse, Inject, Post, Query, Redirect, Req, Res, UseFilters } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { MailService } from '../mail/mail.service';
 import { Connection } from '../connection/connection';
@@ -7,6 +7,7 @@ import { MemberService } from '../member/member.service';
 import { User } from 'generated/prisma';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
+import { ValidationFilter } from 'src/validation/validation.filter';
 
 @Controller('/api/users')
 export class UserController {
@@ -24,6 +25,7 @@ export class UserController {
   }
 
   @Get()
+  @UseFilters(ValidationFilter)
   handleGet(@Query('name') name: string): string {
     return this.userService.sayHello(name);
   }
@@ -113,6 +115,12 @@ export class UserController {
   postUser(
     @Body() createUserDto: CreateUserDto
   ): Promise<User> {
+    if(!createUserDto.firstName){
+      throw new HttpException({
+        code: 400,
+        errors: 'First name is required',
+      }, 400);
+    }
     return this.userRepository.save(createUserDto.firstName, createUserDto.lastName);
   }
 }
