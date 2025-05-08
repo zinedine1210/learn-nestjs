@@ -1,0 +1,7 @@
+POST http://localhost:9090/api/users/create
+Content-Type: application/json
+
+{
+    "firstName": "Zinedine",
+    "lastName": "Fahdlevy"
+}

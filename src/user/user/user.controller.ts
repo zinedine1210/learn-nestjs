@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Header, HttpCode, HttpException, HttpRedirectResponse, Inject, Post, Query, Redirect, Req, Res, UseFilters } from '@nestjs/common';
+import { Body, Controller, Get, Header, HttpCode, HttpException, HttpRedirectResponse, Inject, Param, ParseIntPipe, Post, Query, Redirect, Req, Res, UseFilters } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { MailService } from '../mail/mail.service';
 import { Connection } from '../connection/connection';
@@ -8,6 +8,8 @@ import { User } from 'generated/prisma';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
 import { ValidationFilter } from 'src/validation/validation.filter';
+import { LoginUserRequest, loginUserRequestValidation } from 'src/model/login.model';
+import { ValidationPipe } from 'src/validation/validation.pipe';
 
 @Controller('/api/users')
 export class UserController {
@@ -32,8 +34,14 @@ export class UserController {
 
   // @Get('/:id')
   // handleGetUser(@Req() request: Request): string {
-  //   return request.params.id;
+  //   return `GET ${request.params.id}`;
   // }
+
+  @Get('/:id')
+  handleGetUser(@Param('id', ParseIntPipe) id: number): string {
+    console.info(id * 10); // akan nan karena bukan beneran number
+    return `GET ${id}`;
+  }
 
   // @Get('/sample')
   // handleGetParamsName(@Req() request: Request): string {
@@ -112,6 +120,7 @@ export class UserController {
 
 
   @Post('/create')
+  @UseFilters(ValidationFilter)
   postUser(
     @Body() createUserDto: CreateUserDto
   ): Promise<User> {
@@ -122,5 +131,13 @@ export class UserController {
       }, 400);
     }
     return this.userRepository.save(createUserDto.firstName, createUserDto.lastName);
+  }
+
+  @Post('/login')
+  @UseFilters(ValidationFilter)
+  login(
+    @Body(new ValidationPipe(loginUserRequestValidation)) request: LoginUserRequest
+  ){
+    return `Hello bitch`;
   }
 }
