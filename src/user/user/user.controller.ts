@@ -13,6 +13,7 @@ import { ValidationPipe } from 'src/validation/validation.pipe';
 import { TimeInterceptor } from 'src/time/time.interceptor';
 import { Auth } from 'src/auth/auth.decorator';
 import { RoleGuard } from 'src/role/role.guard';
+import { Roles } from 'src/role/roles.decorator';
 
 @Controller('/api/users')
 export class UserController {
@@ -155,6 +156,7 @@ export class UserController {
 
   @Get('/custom-decorator')
   @UseGuards(RoleGuard)
+  @Roles(['admin', 'operator'])
   customDecorator(
     @Auth() user: User
   ): Record<string, any> {

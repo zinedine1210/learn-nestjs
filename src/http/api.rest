@@ -19,4 +19,4 @@ Content-Type: application/json
 
 ### custom decorator
 GET http://localhost:9090/api/users/custom-decorator
-x-username: 1
+x-username: 2
