@@ -6,10 +6,8 @@ import { Connection, createConnection } from './connection/connection';
 import { UserRepository } from './user-repository/user-repository';
 import { MemberService } from './member/member.service';
 import { ConfigService } from '@nestjs/config';
-import { PrismaModule } from 'src/prisma/prisma.module';
 
 @Module({
-  imports: [PrismaModule],
   controllers: [UserController],
   providers: [
     {

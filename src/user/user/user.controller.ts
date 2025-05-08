@@ -6,6 +6,7 @@ import { UserRepository } from '../user-repository/user-repository';
 import { MemberService } from '../member/member.service';
 import { User } from 'generated/prisma';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UserService } from './user.service';
 
 @Controller('/api/users')
 export class UserController {
@@ -13,6 +14,7 @@ export class UserController {
     private connection: Connection,
     private mailService: MailService,
     private userRepository: UserRepository,
+    private userService: UserService,
     @Inject('EmailService') private emailService: MailService,
     private memberService: MemberService,
   ){}
@@ -22,8 +24,8 @@ export class UserController {
   }
 
   @Get()
-  handleGet(): string {
-    return 'Hallo Bro';
+  handleGet(@Query('name') name: string): string {
+    return this.userService.sayHello(name);
   }
 
   // @Get('/:id')
