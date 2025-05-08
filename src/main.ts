@@ -18,5 +18,8 @@ async function bootstrap() {
   await app.listen(port);
 
   // app.useGlobalFilters(new ValidationFilter()); // harus filter yang bisa menangani semua error
+  // app.useGlobalPipes(...)
+  // app.useGlobalInterceptors(...)
+  // app.useGlobalGuards(...)
 }
 bootstrap();

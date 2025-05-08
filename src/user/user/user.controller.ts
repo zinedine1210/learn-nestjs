@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Header, HttpCode, HttpException, HttpRedirectResponse, Inject, Param, ParseIntPipe, Post, Query, Redirect, Req, Res, UseFilters, UsePipes } from '@nestjs/common';
+import { Body, Controller, Get, Header, HttpCode, HttpException, HttpRedirectResponse, Inject, Param, ParseIntPipe, Post, Query, Redirect, Req, Res, UseFilters, UseGuards, UseInterceptors, UsePipes } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { MailService } from '../mail/mail.service';
 import { Connection } from '../connection/connection';
@@ -10,6 +10,9 @@ import { UserService } from './user.service';
 import { ValidationFilter } from 'src/validation/validation.filter';
 import { LoginUserRequest, loginUserRequestValidation } from 'src/model/login.model';
 import { ValidationPipe } from 'src/validation/validation.pipe';
+import { TimeInterceptor } from 'src/time/time.interceptor';
+import { Auth } from 'src/auth/auth.decorator';
+import { RoleGuard } from 'src/role/role.guard';
 
 @Controller('/api/users')
 export class UserController {
@@ -37,11 +40,11 @@ export class UserController {
   //   return `GET ${request.params.id}`;
   // }
 
-  @Get('/:id')
-  handleGetUser(@Param('id', ParseIntPipe) id: number): string {
-    console.info(id * 10); // akan nan karena bukan beneran number
-    return `GET ${id}`;
-  }
+  // @Get('/:id')
+  // handleGetUser(@Param('id', ParseIntPipe) id: number): string {
+  //   console.info(id * 10); // akan nan karena bukan beneran number
+  //   return `GET ${id}`;
+  // }
 
   // @Get('/sample')
   // handleGetParamsName(@Req() request: Request): string {
@@ -136,10 +139,27 @@ export class UserController {
   @UsePipes(new ValidationPipe(loginUserRequestValidation))
   @Post('/login')
   @UseFilters(ValidationFilter)
+  @UseInterceptors(TimeInterceptor)
+  @Header('Content-Type', 'application/json')
   login(
-    @Query('name') name: string,
-    @Body() request: LoginUserRequest
+    // @Query('name') name: string,
+    @Body() request: LoginUserRequest,
   ){
-    return `Hello bitch`;
+    return {
+      data: {
+        message: `Hallo bang ganteng namanya ${request.username}`,
+      },
+    };
+  }
+
+
+  @Get('/custom-decorator')
+  @UseGuards(RoleGuard)
+  customDecorator(
+    @Auth() user: User
+  ): Record<string, any> {
+    return {
+      data: `Hello welcome back ${user.first_name} ${user.last_name}`,
+    };
   }
 }

@@ -1,0 +1,22 @@
+POST http://localhost:9090/api/users/login
+Content-Type: application/json
+
+{
+    "username": "mantap",
+    "password": "halogengs"
+}
+
+
+###
+
+POST http://localhost:9090/api/users/create
+Content-Type: application/json
+
+{
+    "firstName": "Zinedine",
+    "lastName": "Fahdlevy"
+}
+
+### custom decorator
+GET http://localhost:9090/api/users/custom-decorator
+x-username: 1
