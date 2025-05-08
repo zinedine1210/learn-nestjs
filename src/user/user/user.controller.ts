@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Header, HttpCode, HttpException, HttpRedirectResponse, Inject, Param, ParseIntPipe, Post, Query, Redirect, Req, Res, UseFilters } from '@nestjs/common';
+import { Body, Controller, Get, Header, HttpCode, HttpException, HttpRedirectResponse, Inject, Param, ParseIntPipe, Post, Query, Redirect, Req, Res, UseFilters, UsePipes } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { MailService } from '../mail/mail.service';
 import { Connection } from '../connection/connection';
@@ -124,19 +124,21 @@ export class UserController {
   postUser(
     @Body() createUserDto: CreateUserDto
   ): Promise<User> {
-    if(!createUserDto.firstName){
-      throw new HttpException({
-        code: 400,
-        errors: 'First name is required',
-      }, 400);
-    }
+    // if(!createUserDto.firstName){
+    //   throw new HttpException({
+    //     code: 400,
+    //     errors: 'First name is required',
+    //   }, 400);
+    // }
     return this.userRepository.save(createUserDto.firstName, createUserDto.lastName);
   }
 
+  @UsePipes(new ValidationPipe(loginUserRequestValidation))
   @Post('/login')
   @UseFilters(ValidationFilter)
   login(
-    @Body(new ValidationPipe(loginUserRequestValidation)) request: LoginUserRequest
+    @Query('name') name: string,
+    @Body() request: LoginUserRequest
   ){
     return `Hello bitch`;
   }
